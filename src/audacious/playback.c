@@ -188,7 +188,8 @@ playback_stop(void)
     {
         if (playback_get_paused() == TRUE)
         {
-            output_flush(get_written_time()); /* to avoid noise */
+            if (get_written_time() > 0)
+              output_flush(get_written_time()); /* to avoid noise */
             playback_pause();
         }
 
