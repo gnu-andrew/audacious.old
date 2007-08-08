@@ -38,7 +38,7 @@ HEADERS = \
 	configdb.h \
 	custom_uri.h \
 	dbus.h \
-	dbus-service.h \
+	discovery.h \
 	eventqueue.h \
 	formatter.h \
 	rcfile.h \
