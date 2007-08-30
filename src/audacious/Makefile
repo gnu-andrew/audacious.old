@@ -55,6 +55,7 @@ HEADERS = \
 	strings.h \
 	tuple.h \
 	tuple_formatter.h \
+	tuple_compiler.h \
 	ui_fileinfopopup.h \
 	ui_lastfm.h\
 	ui_plugin_menu.h \
@@ -102,6 +103,7 @@ SOURCES = \
 	strings.c \
 	tuple.c \
 	tuple_formatter.c \
+	tuple_compiler.c \
 	skin.c \
 	ui_about.c \
 	ui_albumart.c \
