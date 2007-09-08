@@ -49,6 +49,10 @@ const TupleBasicType tuple_fields[FIELD_LAST] = {
     { "date",           TUPLE_STRING },
 };
 
+static mowgli_heap_t *tuple_heap = NULL;
+static mowgli_heap_t *tuple_value_heap = NULL;
+static mowgli_object_class_t tuple_klass;
+
 
 static mowgli_heap_t *tuple_heap = NULL;
 static mowgli_heap_t *tuple_value_heap = NULL;
@@ -291,7 +295,7 @@ tuple_get_value_type(Tuple *tuple, const gint nfield, const gchar *field)
             return value->type;
     } else {
         if (tuple->values[nfield])
-            return tuple->values[nfield]->type;
+            type = tuple->values[nfield]->type;
     }
     
     TUPLE_UNLOCK_READ();
