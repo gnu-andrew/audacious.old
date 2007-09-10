@@ -279,8 +279,10 @@ playlist_add_playlist(Playlist *playlist)
 void
 playlist_remove_playlist(Playlist *playlist)
 {
+    gboolean active;
+    active = (playlist && playlist == playlist_get_active());
     /* users suppose playback will be stopped on removing playlist */
-    if (playback_get_playing()) {
+    if (active && playback_get_playing()) {
         ip_data.stop = TRUE;
         playback_stop();
         ip_data.stop = FALSE;
@@ -294,8 +296,7 @@ playlist_remove_playlist(Playlist *playlist)
         return;
     }
 
-    if (playlist == playlist_get_active())
-        playlist_select_next();
+    if (active) playlist_select_next();
 
     /* upon removal, a playlist should be cleared and freed */
     playlists = g_list_remove(playlists, playlist);
