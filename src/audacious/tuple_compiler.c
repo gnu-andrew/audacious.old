@@ -587,10 +587,9 @@ static TupleValueType tf_get_var(gchar **tmps, gint *tmpi, TupleEvalVar *var, Tu
       }
       break;
     default:
-      tmps = NULL;
-      tmpi = 0;
+      break;
   }
-  
+
   return type;
 }
 
@@ -613,7 +612,6 @@ static gboolean tuple_formatter_eval_do(TupleEvalContext *ctx, TupleEvalNode *ex
   
   while (curr) {
     const gchar *str = NULL;
-
     switch (curr->opcode) {
       case OP_RAW:
         str = curr->text;
@@ -660,7 +658,7 @@ static gboolean tuple_formatter_eval_do(TupleEvalContext *ctx, TupleEvalNode *ex
       case OP_GT: case OP_GTEQ:
         var0 = ctx->variables[curr->var[0]];
         var1 = ctx->variables[curr->var[1]];
-        
+
         type0 = tf_get_var(&tmps0, &tmpi0, var0, tuple);
         type1 = tf_get_var(&tmps1, &tmpi1, var1, tuple);
         
@@ -756,8 +754,6 @@ gchar *tuple_formatter_eval(TupleEvalContext *ctx, TupleEvalNode *expr, Tuple *t
   size_t resmax = 0, reslen = 0;
   assert(ctx != NULL);
   assert(tuple != NULL);
-  
-  if (!expr) return res;
   
   tuple_formatter_eval_do(ctx, expr, tuple, &res, &resmax, &reslen);
   
