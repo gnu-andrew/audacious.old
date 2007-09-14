@@ -25,7 +25,10 @@
 #include "tuple.h"
 
 
-#define TUP_MAX_VARS (4)
+#define MAX_VAR		(2)
+#define MAX_STR		(256)
+#define MIN_ALLOC_NODES (8)
+#define MIN_ALLOC_BUF	(128)
 
 
 enum {
