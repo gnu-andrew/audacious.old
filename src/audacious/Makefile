@@ -13,6 +13,7 @@ INCLUDES = \
 	dbus.h \
 	discovery.h \
 	eventqueue.h \
+	flow.h \
 	formatter.h \
 	rcfile.h \
 	i18n.h \
