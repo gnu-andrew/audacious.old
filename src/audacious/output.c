@@ -500,7 +500,7 @@ output_pass_audio(InputPlayback *playback,
     gint writeoffs;
     gpointer float_ptr;
 
-    if (length <= 0 || sad_state_to_float == NULL || sad_state_from_float == NULL) return;
+    if(length <= 0 || sad_state_from_float == NULL || sad_state_to_float == NULL) return;
     
     plugin_set_current((Plugin *)(playback->output));
     
