@@ -511,7 +511,6 @@ output_pass_audio(InputPlayback *playback,
         legacy_flow = flow_new();
         flow_link_element(legacy_flow, iir_flow);
         flow_link_element(legacy_flow, effect_flow);
-        flow_link_element(legacy_flow, volumecontrol_flow);
     }
     
     if (postproc_flow == NULL)
@@ -521,6 +520,7 @@ output_pass_audio(InputPlayback *playback,
 #ifdef USE_SRC
         flow_link_element(postproc_flow, src_flow);
 #endif
+        flow_link_element(postproc_flow, volumecontrol_flow);
     }
 
     int frames = length / nch / FMT_SIZEOF(fmt);
