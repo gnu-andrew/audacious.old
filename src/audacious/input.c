@@ -254,6 +254,7 @@ input_do_check_file(InputPlugin *ip, VFSFile *fd, gchar *filename_proxy, gboolea
          (ip->probe_for_tuple && ip->have_subtune == TRUE) ||
          (ip->probe_for_tuple && (cfg.use_pl_metadata && (!loading || (loading && cfg.get_info_on_load)))) ) {
 
+        plugin_set_current((Plugin *)ip);
         Tuple *tuple = ip->probe_for_tuple(filename_proxy, fd);
 
         if (tuple != NULL) {
@@ -267,6 +268,7 @@ input_do_check_file(InputPlugin *ip, VFSFile *fd, gchar *filename_proxy, gboolea
     }
 
     else if (ip->is_our_file_from_vfs != NULL) {
+	plugin_set_current((Plugin *)ip);
         result = ip->is_our_file_from_vfs(filename_proxy, fd);
 
         if (result > 0) {
@@ -278,6 +280,7 @@ input_do_check_file(InputPlugin *ip, VFSFile *fd, gchar *filename_proxy, gboolea
     }
 
     else if (ip->is_our_file != NULL) {
+	plugin_set_current((Plugin *)ip);
         result = ip->is_our_file(filename_proxy);
 
         if (result > 0) {
@@ -363,7 +366,10 @@ input_check_file(const gchar *filename, gboolean loading)
     /* cue:// cdda:// tone:// tact:// */
     if ((ip = uri_get_plugin(filename_proxy)) != NULL && ip->enabled) {
         if (ip->is_our_file != NULL)
+	{
+	    plugin_set_current((Plugin *)ip);
             ret = ip->is_our_file(filename_proxy);
+	}
         else
             ret = 0;
         if (ret > 0) {
@@ -488,7 +494,10 @@ input_set_eq(gint on, gfloat preamp, gfloat * bands)
         return;
 
     if (playback->plugin->set_eq)
+    {
+        plugin_set_current((Plugin *)(playback->plugin));
         playback->plugin->set_eq(on, preamp, bands);
+    }
 }
 
 void
@@ -578,7 +587,10 @@ input_get_song_tuple(const gchar * filename)
     g_free(pr);
 
     if (ip && ip->get_song_tuple)
+    {
+        plugin_set_current((Plugin *)ip);
         input = ip->get_song_tuple(filename_proxy);
+    }
     else
     {
         gchar *scratch;
@@ -701,7 +713,10 @@ input_file_info_box(const gchar * filename)
     g_free(pr);
 
     if (ip->file_info_box)
+    {
+        plugin_set_current((Plugin *)ip);
         ip->file_info_box(filename_proxy);
+    }
     else
         input_general_file_info_box(filename, ip);
 
@@ -736,6 +751,7 @@ input_scan_dir(const gchar * path)
         if (!ip->enabled)
             continue;
 
+        plugin_set_current((Plugin *)ip);
         if ((result = ip->scan_dir(path_proxy)))
             break;
     }
@@ -766,11 +782,14 @@ input_set_volume(gint l, gint r)
     h_vol[1] = r;
     hook_call("volume set", h_vol);
     
-    if (playback_get_playing() &&
-        (playback = get_current_input_playback()) != NULL &&
-        playback->plugin->set_volume &&
-        playback->plugin->set_volume(l, r))
-        return;
+    if (playback_get_playing())
+        if ((playback = get_current_input_playback()) != NULL)
+	    if (playback->plugin->set_volume != NULL)
+	    {
+	        plugin_set_current((Plugin *)(playback->plugin));
+	        if (playback->plugin->set_volume(l, r))
+		    return;
+	    }
 
     output_set_volume(l, r);
 

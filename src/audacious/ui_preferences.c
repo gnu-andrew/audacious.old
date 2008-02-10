@@ -750,6 +750,7 @@ plugin_treeview_open_prefs(GtkTreeView *treeview)
     g_return_if_fail(plugin != NULL);
     g_return_if_fail(plugin->configure != NULL);
 
+    plugin_set_current(plugin);
     plugin->configure();
 }
 
@@ -768,6 +769,7 @@ plugin_treeview_open_info(GtkTreeView *treeview)
 
     g_return_if_fail(plugin != NULL);
 
+    plugin_set_current(plugin);
     plugin->about();
 }
 
