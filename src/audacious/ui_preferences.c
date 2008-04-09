@@ -687,7 +687,7 @@ on_proxy_button_realize(GtkToggleButton *button, gchar *cfg)
 {
     g_return_if_fail(cfg != NULL);
 
-    ConfigDb *db;
+    mcs_handle_t *db;
     gboolean ret;
 
     db = cfg_db_open();
@@ -703,7 +703,7 @@ on_proxy_button_toggled(GtkToggleButton *button, gchar *cfg)
 {
     g_return_if_fail(cfg != NULL);
 
-    ConfigDb *db;
+    mcs_handle_t *db;
     gboolean ret = gtk_toggle_button_get_active(button);
 
     db = cfg_db_open();
@@ -716,7 +716,7 @@ on_proxy_entry_changed(GtkEntry *entry, gchar *cfg)
 {
     g_return_if_fail(cfg != NULL);
 
-    ConfigDb *db;
+    mcs_handle_t *db;
     gchar *ret = g_strdup(gtk_entry_get_text(entry));
 
     db = cfg_db_open();
@@ -731,7 +731,7 @@ on_proxy_entry_realize(GtkEntry *entry, gchar *cfg)
 {
     g_return_if_fail(cfg != NULL);
 
-    ConfigDb *db;
+    mcs_handle_t *db;
     gchar *ret;
 
     db = cfg_db_open();
@@ -1025,7 +1025,7 @@ on_skin_view_drag_data_received(GtkWidget * widget,
                                 guint info, guint time,
                                 gpointer user_data) 
 {
-    ConfigDb *db;
+    mcs_handle_t *db;
     gchar *path;
 
     if (!selection_data->data) {
@@ -1062,7 +1062,7 @@ on_skin_view_drag_data_received(GtkWidget * widget,
 static void
 on_chardet_detector_cbox_changed(GtkComboBox * combobox, gpointer data)
 {
-    ConfigDb *db;
+    mcs_handle_t *db;
     gint position = 0;
 
     position = gtk_combo_box_get_active(GTK_COMBO_BOX(combobox));
@@ -1078,7 +1078,7 @@ on_chardet_detector_cbox_changed(GtkComboBox * combobox, gpointer data)
 static void
 on_chardet_detector_cbox_realize(GtkComboBox *combobox, gpointer data)
 {
-    ConfigDb *db;
+    mcs_handle_t *db;
     gchar *ret=NULL;
     guint i=0,index=0;
 
@@ -1116,7 +1116,7 @@ on_chardet_detector_cbox_realize(GtkComboBox *combobox, gpointer data)
 static void
 on_chardet_fallback_realize(GtkEntry *entry, gpointer data)
 {
-    ConfigDb *db;
+    mcs_handle_t *db;
     gchar *ret = NULL;
 
     db = cfg_db_open();
@@ -1139,7 +1139,7 @@ on_chardet_fallback_realize(GtkEntry *entry, gpointer data)
 static void
 on_chardet_fallback_changed(GtkEntry *entry, gpointer data)
 {
-    ConfigDb *db;
+    mcs_handle_t *db;
     gchar *ret = NULL;
 
     if(cfg.chardet_fallback)
