@@ -156,7 +156,7 @@ static TupleValue *
 tuple_associate_data(Tuple *tuple, const gint cnfield, const gchar *field, TupleValueType ftype);
 
 static gboolean
-_tuple_associate_raw_string(Tuple *tuple, const gint nfield, const gchar *field, const gchar *string)
+_tuple_associate_raw_string(Tuple *tuple, const gint nfield, const gchar *field, gchar *string)
 {
     TupleValue *value;
 
@@ -164,7 +164,7 @@ _tuple_associate_raw_string(Tuple *tuple, const gint nfield, const gchar *field,
     if ((value = tuple_associate_data(tuple, nfield, field, TUPLE_STRING)) == NULL)
         return FALSE;
 
-    value->value.string = NULL;
+    value->value.string = string;
 
     TUPLE_UNLOCK_WRITE();
     return TRUE;
