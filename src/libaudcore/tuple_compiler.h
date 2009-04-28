@@ -53,9 +53,9 @@ enum {
 
 
 enum {
-    VAR_FIELD = 0,
-    VAR_CONST,
-    VAR_DEF
+    TUPLE_VAR_FIELD = 0,
+    TUPLE_VAR_CONST,
+    TUPLE_VAR_DEF
 };
 
 
