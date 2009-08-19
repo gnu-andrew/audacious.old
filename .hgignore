@@ -31,6 +31,7 @@ syntax: regexp
 ^src/tests/tuple_formatter_test
 ^cscope\.out
 ^tags
+^doc
 syntax: glob
 .git
 .deps
