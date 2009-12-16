@@ -33,8 +33,8 @@
 #include <mowgli.h>
 
 #include "input.h"
-#include "playlist-utils.h"
 #include "plugin-registry.h"
+#include "probe.h"
 
 PlaybackData ip_data =
 {
@@ -247,23 +247,11 @@ input_get_song_tuple(const gchar * filename)
     InputPlugin *ip = NULL;
     Tuple *input = NULL;
     gchar *ext = NULL;
-    ProbeResult *pr;
 
     if (filename == NULL)
         return NULL;
 
-    ip = filename_find_decoder (filename);
-
-    if (ip == NULL)
-    {
-        pr = input_check_file (filename);
-
-        if (pr == NULL)
-            return NULL;
-
-        ip = pr->ip;
-        g_free (pr);
-    }
+    ip = file_probe (filename, FALSE);
 
     if (ip && ip->get_song_tuple)
         input = ip->get_song_tuple (filename);
@@ -368,31 +356,18 @@ input_general_file_info_box(const gchar * filename, InputPlugin * ip)
     gtk_widget_show_all(window);
 }
 
-void
-input_file_info_box(const gchar * filename)
+void input_file_info_box (const gchar * filename)
 {
-    InputPlugin *ip;
-    gchar *filename_proxy;
-    ProbeResult *pr;
+    InputPlugin * decoder;
 
-    filename_proxy = g_strdup(filename);
+    decoder = file_probe (filename, FALSE);
 
-    pr = input_check_file (filename_proxy);
-
-    if (!pr)
-        return;
-
-    ip = pr->ip;
-
-    g_free(pr);
-
-    if (ip->file_info_box)
-        ip->file_info_box(filename_proxy);
+    if (decoder != NULL && decoder->file_info_box != NULL)
+        decoder->file_info_box (filename);
     else
-        input_general_file_info_box(filename, ip);
-
-    g_free(filename_proxy);
+        input_general_file_info_box (filename, decoder);
 }
+
 void
 input_get_volume(gint * l, gint * r)
 {
