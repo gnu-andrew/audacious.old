@@ -37,7 +37,7 @@ syntax: glob
 .deps
 *.a
 *.dylib
-*.gmo
+*.mo
 *.o
 *.so
 *~
