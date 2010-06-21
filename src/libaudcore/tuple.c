@@ -552,8 +552,8 @@ tuple_disassociate(Tuple *tuple, const gint cnfield, const gchar *field)
  * @param[in] field String acting as key name or NULL if nfield is used.
  * @return #TupleValueType of the field or TUPLE_UNKNOWN if there was an error.
  */
-TupleValueType
-tuple_get_value_type(Tuple *tuple, const gint cnfield, const gchar *field)
+TupleValueType tuple_get_value_type (const Tuple * tuple, gint cnfield,
+ const gchar * field)
 {
     TupleValueType type = TUPLE_UNKNOWN;
     gint nfield = cnfield;
@@ -588,8 +588,8 @@ tuple_get_value_type(Tuple *tuple, const gint cnfield, const gchar *field)
  * @return Pointer to string or NULL if the field/key did not exist.
  * The returned string is const, and must not be freed or modified.
  */
-const gchar *
-tuple_get_string(Tuple *tuple, const gint cnfield, const gchar *field)
+const gchar * tuple_get_string (const Tuple * tuple, gint cnfield, const gchar *
+ field)
 {
     TupleValue *value;
     gint nfield = cnfield;
@@ -642,8 +642,7 @@ tuple_get_string(Tuple *tuple, const gint cnfield, const gchar *field)
  *
  * @bug There is no way to distinguish error situations if the associated value is zero.
  */
-gint
-tuple_get_int(Tuple *tuple, const gint cnfield, const gchar *field)
+gint tuple_get_int (const Tuple * tuple, gint cnfield, const gchar * field)
 {
     TupleValue *value;
     gint nfield = cnfield;
