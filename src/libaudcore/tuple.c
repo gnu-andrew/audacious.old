@@ -106,9 +106,9 @@ static mowgli_object_class_t tuple_klass;
 
 /* iterative destructor of tuple values. */
 static void
-tuple_value_destroy(mowgli_dictionary_elem_t *delem, gpointer privdata)
+tuple_value_destroy(const gchar *key, gpointer data, gpointer privdata)
 {
-    TupleValue *value = (TupleValue *) delem->data;
+    TupleValue *value = (TupleValue *) data;
 
     if (value->type == TUPLE_STRING) {
         stringpool_unref(value->value.string);
@@ -125,7 +125,7 @@ tuple_destroy(gpointer data)
     gint i;
 
     TUPLE_LOCK_WRITE();
-    mowgli_dictionary_destroy(tuple->dict, tuple_value_destroy, NULL);
+    mowgli_patricia_destroy(tuple->dict, tuple_value_destroy, NULL);
 
     for (i = 0; i < FIELD_LAST; i++)
         if (tuple->values[i]) {
@@ -163,7 +163,7 @@ tuple_new_unlocked(void)
     memset(tuple, 0, sizeof(Tuple));
     mowgli_object_init(mowgli_object(tuple), NULL, &tuple_klass, NULL);
 
-    tuple->dict = mowgli_dictionary_create(g_ascii_strcasecmp);
+    tuple->dict = mowgli_patricia_create(string_canonize_case);
 
     return tuple;
 }
@@ -251,6 +251,7 @@ tuple_copy_value(TupleValue *src)
     if (src == NULL) return NULL;
 
     res = mowgli_heap_alloc(tuple_value_heap);
+    g_strlcpy(res->name, src->name, TUPLE_NAME_MAX);
     res->type = src->type;
 
     switch (src->type) {
@@ -278,7 +279,7 @@ tuple_copy(const Tuple *src)
 {
     Tuple *dst;
     TupleValue * tv, * copied;
-    mowgli_dictionary_iteration_state_t state;
+    mowgli_patricia_iteration_state_t state;
     gint i;
 
     g_return_val_if_fail(src != NULL, NULL);
@@ -292,10 +293,10 @@ tuple_copy(const Tuple *src)
         dst->values[i] = tuple_copy_value(src->values[i]);
 
     /* Copy dictionary contents */
-    MOWGLI_DICTIONARY_FOREACH (tv, & state, src->dict)
+    MOWGLI_PATRICIA_FOREACH (tv, & state, src->dict)
     {
         if ((copied = tuple_copy_value (tv)) != NULL)
-            mowgli_dictionary_add (dst->dict, state.cur->key, copied);
+            mowgli_patricia_add (dst->dict, copied->name, copied);
     }
 
     /* Copy subtune number information */
@@ -385,7 +386,7 @@ tuple_associate_data(Tuple *tuple, const gint cnfield, const gchar *field, Tuple
             return NULL;
         }
     } else {
-        value = mowgli_dictionary_retrieve(tuple->dict, tfield);
+        value = mowgli_patricia_retrieve(tuple->dict, tfield);
     }
 
     if (value != NULL) {
@@ -397,11 +398,12 @@ tuple_associate_data(Tuple *tuple, const gint cnfield, const gchar *field, Tuple
     } else {
         /* Allocate a new value */
         value = mowgli_heap_alloc(tuple_value_heap);
+        g_strlcpy(value->name, tfield, TUPLE_NAME_MAX);
         value->type = ftype;
         if (nfield >= 0)
             tuple->values[nfield] = value;
         else
-            mowgli_dictionary_add(tuple->dict, tfield, value);
+            mowgli_patricia_add(tuple->dict, tfield, value);
     }
     
     return value;
@@ -524,7 +526,7 @@ tuple_disassociate(Tuple *tuple, const gint cnfield, const gchar *field)
     TUPLE_LOCK_WRITE();
     if (nfield < 0)
         /* why _delete()? because _delete() returns the dictnode's data on success */
-        value = mowgli_dictionary_delete(tuple->dict, field);
+        value = mowgli_patricia_delete(tuple->dict, field);
     else {
         value = tuple->values[nfield];
         tuple->values[nfield] = NULL;
@@ -569,8 +571,9 @@ TupleValueType tuple_get_value_type (const Tuple * tuple, gint cnfield,
 
     TUPLE_LOCK_READ();
     if (nfield < 0) {
-        if ((value = mowgli_dictionary_retrieve(tuple->dict, field)) != NULL)
-            return value->type;
+        TupleValue *value;
+        if ((value = mowgli_patricia_retrieve(tuple->dict, field)) != NULL)
+            type = value->type;
     } else {
         if (tuple->values[nfield])
             type = tuple->values[nfield]->type;
@@ -605,7 +608,7 @@ const gchar * tuple_get_string (const Tuple * tuple, gint cnfield, const gchar *
 
     TUPLE_LOCK_READ();
     if (nfield < 0)
-        value = mowgli_dictionary_retrieve(tuple->dict, field);
+        value = mowgli_patricia_retrieve(tuple->dict, field);
     else
         value = tuple->values[nfield];
 
@@ -658,7 +661,7 @@ gint tuple_get_int (const Tuple * tuple, gint cnfield, const gchar * field)
 
     TUPLE_LOCK_READ();
     if (nfield < 0)
-        value = mowgli_dictionary_retrieve(tuple->dict, field);
+        value = mowgli_patricia_retrieve(tuple->dict, field);
     else
         value = tuple->values[nfield];
 
