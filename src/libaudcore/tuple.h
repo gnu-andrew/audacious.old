@@ -81,6 +81,7 @@ enum {
     FIELD_GAIN_PEAK_UNIT,
 
     FIELD_COMPOSER,     /**< Composer of song, if different than artist. */
+    FIELD_MBID,         /** MusicBrainz identifer for the song */
 
     /* Special field, must always be last */
     FIELD_LAST

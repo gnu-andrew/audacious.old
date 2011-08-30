@@ -78,6 +78,7 @@ const TupleBasicType tuple_fields[FIELD_LAST] = {
     { "gain-peak-unit", TUPLE_INT },
 
     { "composer",       TUPLE_STRING },
+    { "mbid",           TUPLE_STRING },
 };
 
 
